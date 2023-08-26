@@ -2,9 +2,11 @@ package main
 
 import (
 	"bufio"
+	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 type Mail struct {
@@ -25,7 +27,7 @@ var (
 func mblaze_mscan() ([]Mail, error) {
 	var mails []Mail
 
-	cmd := exec.Command("mscan", "-f", mscanFmt, "1:-1")
+	cmd := exec.Command("env", "MBLAZE_PAGER=", "mscan", "-f", mscanFmt, "1:-1")
 	reader, err := cmd.StdoutPipe()
 	if err != nil {
 		return mails, err
@@ -62,4 +64,26 @@ func mblaze_mscan() ([]Mail, error) {
 	}
 
 	return mails, nil
+}
+
+func mblaze_show(mail Mail) error {
+	// Use custom command-line options for less to ensure
+	// the pager doesn't exit if the output fits on the screen.
+	//
+	// See also: https://github.com/leahneukirchen/mblaze/blob/v1.2/mshow.c#L818-L822
+	pager := os.Getenv("PAGER")
+	if pager == "" || strings.HasPrefix(pager, "less") {
+		pager = "less --RAW-CONTROL-CHARS"
+	}
+
+	cmd := exec.Command("mshow", strconv.FormatUint(uint64(mail.ID), 10))
+	cmd.Env = append(os.Environ(), "MBLAZE_PAGER="+pager)
+
+	// Make sure that we use {stdout,stdin,stderr} of the parent
+	// process. Need to this explicitly when using os/exec.
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	return cmd.Run()
 }

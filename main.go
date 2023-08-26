@@ -111,6 +111,15 @@ func main() {
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
 				return
+			} else if ev.Key() == tcell.KeyEnter {
+				s.Fini()
+				mail := mails[idx.Cur()]
+				err := mblaze_show(mail)
+				if err != nil {
+					log.Fatal(err)
+				}
+				s = initScreen()
+				drawRows(s, idx, mails)
 			} else if ev.Key() == tcell.KeyDown {
 				idx.Inc()
 				drawRows(s, idx, mails)

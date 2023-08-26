@@ -18,6 +18,10 @@ func (i *Index) IsSelected(idx int) bool {
 	return i.idx == idx
 }
 
+func (i *Index) Cur() int {
+	return i.idx
+}
+
 func (i *Index) Inc() {
 	i.idx = (i.idx + 1) % i.max()
 }
