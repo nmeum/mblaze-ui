@@ -5,67 +5,10 @@ import (
 	"log"
 )
 
-type Context struct {
-	Mails  []Mail
-	Index  *Index
-	Screen tcell.Screen
-}
-
-var (
-	// Style used for non-selected rows.
-	defStyle = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
-
-	// Style used for the currently selected row.
-	selStyle = tcell.StyleDefault.Background(tcell.ColorWhite).Foreground(tcell.ColorBlack)
-)
-
 const (
 	// Rune used to indicate that the row has been abbreviated.
 	Abbreviated = '…'
 )
-
-func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) {
-	for _, r := range []rune(text) {
-		s.SetContent(col, row, r, nil, style)
-		col++
-	}
-}
-
-func drawRows(s tcell.Screen, idx *Index, rows []Mail) {
-	xmax, _ := s.Size()
-	if xmax <= 1 {
-		panic("terminal is too small")
-	}
-
-	y := 0
-	for i, row := range rows {
-		text := row.Subject
-
-		var style tcell.Style
-		if idx.IsSelected(i) {
-			style = selStyle
-		} else {
-			style = defStyle
-		}
-
-		truncated := false
-		if len(text) >= xmax {
-			text = text[0 : len(text)-1]
-			truncated = true
-		}
-		drawText(s, y, 0, style, text)
-		if truncated {
-			// TODO: Determine cells needed for Abbreviated.
-			s.SetContent(xmax-1, y, Abbreviated, nil, style)
-		} else {
-			for x := len(text); x < xmax; x++ {
-				s.SetContent(x, y, ' ', nil, style)
-			}
-		}
-
-		y++
-	}
-}
 
 func initScreen() tcell.Screen {
 	s, err := tcell.NewScreen()
@@ -90,7 +33,7 @@ func handleEventKey(ctx *Context, ev *tcell.EventKey) {
 			log.Fatal(err)
 		}
 		ctx.Screen = initScreen()
-		drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+		ctx.Draw()
 	} else if ev.Key() == tcell.KeyRune {
 		mail := ctx.Mails[ctx.Index.Cur()]
 		switch ev.Rune() {
@@ -105,13 +48,13 @@ func handleEventKey(ctx *Context, ev *tcell.EventKey) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+		ctx.Draw()
 	} else if ev.Key() == tcell.KeyDown {
 		ctx.Index.Inc()
-		drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+		ctx.Draw()
 	} else if ev.Key() == tcell.KeyUp {
 		ctx.Index.Dec()
-		drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+		ctx.Draw()
 	} else if ev.Key() == tcell.KeyCtrlL {
 		ctx.Screen.Sync()
 	}
@@ -124,7 +67,7 @@ func eventLoop(ctx *Context) {
 
 		switch ev := ev.(type) {
 		case *tcell.EventResize:
-			drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+			ctx.Draw()
 			ctx.Screen.Sync()
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
@@ -163,6 +106,6 @@ func main() {
 	ctx := &Context{mails, idx, s}
 	defer cleanup(ctx)
 
-	drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+	ctx.Draw()
 	eventLoop(ctx)
 }
