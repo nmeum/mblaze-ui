@@ -136,6 +136,18 @@ func eventLoop(ctx *Context) {
 	}
 }
 
+func cleanup(ctx *Context) {
+	// You have to catch panics in a defer, clean up, and
+	// re-raise them - otherwise your application can
+	// die without leaving any diagnostic trace.
+	maybePanic := recover()
+
+	ctx.Screen.Fini()
+	if maybePanic != nil {
+		panic(maybePanic)
+	}
+}
+
 func main() {
 	mails, err := mblaze_mscan()
 	if err != nil {
@@ -147,20 +159,10 @@ func main() {
 		_, ymax := s.Size()
 		return min(ymax, len(mails))
 	})
-	drawRows(s, idx, mails)
-
-	quit := func() {
-		// You have to catch panics in a defer, clean up, and
-		// re-raise them - otherwise your application can
-		// die without leaving any diagnostic trace.
-		maybePanic := recover()
-		s.Fini()
-		if maybePanic != nil {
-			panic(maybePanic)
-		}
-	}
-	defer quit()
 
 	ctx := &Context{mails, idx, s}
+	defer cleanup(ctx)
+
+	drawRows(ctx.Screen, ctx.Index, ctx.Mails)
 	eventLoop(ctx)
 }
