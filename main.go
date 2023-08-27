@@ -50,11 +50,9 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 		}
 		ui.Draw()
 	} else if ev.Key() == tcell.KeyDown {
-		ui.Index.Inc()
-		ui.Draw()
+		ui.NextMail()
 	} else if ev.Key() == tcell.KeyUp {
-		ui.Index.Dec()
-		ui.Draw()
+		ui.PrevMail()
 	} else if ev.Key() == tcell.KeyCtrlL {
 		ui.Screen.Sync()
 	}
