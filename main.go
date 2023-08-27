@@ -5,6 +5,12 @@ import (
 	"log"
 )
 
+type Context struct {
+	Mails  []Mail
+	Index  *Index
+	Screen tcell.Screen
+}
+
 var (
 	// Style used for non-selected rows.
 	defStyle = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
@@ -75,6 +81,42 @@ func initScreen() tcell.Screen {
 	return s
 }
 
+func handleEventKey(ctx *Context, ev *tcell.EventKey) {
+	if ev.Key() == tcell.KeyEnter {
+		ctx.Screen.Fini()
+		mail := ctx.Mails[ctx.Index.Cur()]
+		err := mblaze_show(mail)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ctx.Screen = initScreen()
+		drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+	} else if ev.Key() == tcell.KeyRune {
+		mail := ctx.Mails[ctx.Index.Cur()]
+		switch ev.Rune() {
+		case 's':
+			mblaze_flag(mail, Seen)
+		case 'f':
+			mblaze_flag(mail, Flagged)
+		}
+
+		var err error
+		ctx.Mails, err = mblaze_mscan()
+		if err != nil {
+			log.Fatal(err)
+		}
+		drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+	} else if ev.Key() == tcell.KeyDown {
+		ctx.Index.Inc()
+		drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+	} else if ev.Key() == tcell.KeyUp {
+		ctx.Index.Dec()
+		drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+	} else if ev.Key() == tcell.KeyCtrlL {
+		ctx.Screen.Sync()
+	}
+}
+
 func main() {
 	mails, err := mblaze_mscan()
 	if err != nil {
@@ -100,49 +142,21 @@ func main() {
 	}
 	defer quit()
 
+	ctx := &Context{mails, idx, s}
 	for {
-		s.Show()
-		ev := s.PollEvent()
+		ctx.Screen.Show()
+		ev := ctx.Screen.PollEvent()
 
 		switch ev := ev.(type) {
 		case *tcell.EventResize:
 			drawRows(s, idx, mails)
-			s.Sync()
+			ctx.Screen.Sync()
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
 				return
-			} else if ev.Key() == tcell.KeyEnter {
-				s.Fini()
-				mail := mails[idx.Cur()]
-				err := mblaze_show(mail)
-				if err != nil {
-					log.Fatal(err)
-				}
-				s = initScreen()
-				drawRows(s, idx, mails)
-			} else if ev.Key() == tcell.KeyRune {
-				mail := mails[idx.Cur()]
-				switch ev.Rune() {
-				case 's':
-					mblaze_flag(mail, Seen)
-				case 'f':
-					mblaze_flag(mail, Flagged)
-				}
-
-				mails, err := mblaze_mscan()
-				if err != nil {
-					log.Fatal(err)
-				}
-				drawRows(s, idx, mails)
-			} else if ev.Key() == tcell.KeyDown {
-				idx.Inc()
-				drawRows(s, idx, mails)
-			} else if ev.Key() == tcell.KeyUp {
-				idx.Dec()
-				drawRows(s, idx, mails)
-			} else if ev.Key() == tcell.KeyCtrlL {
-				s.Sync()
 			}
+
+			handleEventKey(ctx, ev)
 		}
 	}
 }
