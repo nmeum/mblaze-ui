@@ -27,7 +27,9 @@ var (
 func mblaze_mscan() ([]Mail, error) {
 	var mails []Mail
 
-	cmd := exec.Command("env", "MBLAZE_PAGER=", "mscan", "-f", mscanFmt, "1:-1")
+	cmd := exec.Command("mscan", "-f", mscanFmt, "1:-1")
+	cmd.Env = append(os.Environ(), "MBLAZE_PAGER=")
+
 	reader, err := cmd.StdoutPipe()
 	if err != nil {
 		return mails, err
