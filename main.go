@@ -24,18 +24,18 @@ func initScreen() tcell.Screen {
 	return s
 }
 
-func handleEventKey(ctx *Context, ev *tcell.EventKey) {
+func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 	if ev.Key() == tcell.KeyEnter {
-		ctx.Screen.Fini()
-		mail := ctx.Mails[ctx.Index.Cur()]
+		ui.Screen.Fini()
+		mail := ui.Mails[ui.Index.Cur()]
 		err := mblaze_show(mail)
 		if err != nil {
 			log.Fatal(err)
 		}
-		ctx.Screen = initScreen()
-		ctx.Draw()
+		ui.Screen = initScreen()
+		ui.Draw()
 	} else if ev.Key() == tcell.KeyRune {
-		mail := ctx.Mails[ctx.Index.Cur()]
+		mail := ui.Mails[ui.Index.Cur()]
 		switch ev.Rune() {
 		case 's':
 			mblaze_flag(mail, Seen)
@@ -44,48 +44,48 @@ func handleEventKey(ctx *Context, ev *tcell.EventKey) {
 		}
 
 		var err error
-		ctx.Mails, err = mblaze_mscan()
+		ui.Mails, err = mblaze_mscan()
 		if err != nil {
 			log.Fatal(err)
 		}
-		ctx.Draw()
+		ui.Draw()
 	} else if ev.Key() == tcell.KeyDown {
-		ctx.Index.Inc()
-		ctx.Draw()
+		ui.Index.Inc()
+		ui.Draw()
 	} else if ev.Key() == tcell.KeyUp {
-		ctx.Index.Dec()
-		ctx.Draw()
+		ui.Index.Dec()
+		ui.Draw()
 	} else if ev.Key() == tcell.KeyCtrlL {
-		ctx.Screen.Sync()
+		ui.Screen.Sync()
 	}
 }
 
-func eventLoop(ctx *Context) {
+func eventLoop(ui *UserInterface) {
 	for {
-		ctx.Screen.Show()
-		ev := ctx.Screen.PollEvent()
+		ui.Screen.Show()
+		ev := ui.Screen.PollEvent()
 
 		switch ev := ev.(type) {
 		case *tcell.EventResize:
-			ctx.Draw()
-			ctx.Screen.Sync()
+			ui.Draw()
+			ui.Screen.Sync()
 		case *tcell.EventKey:
 			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
 				return
 			}
 
-			handleEventKey(ctx, ev)
+			handleEventKey(ui, ev)
 		}
 	}
 }
 
-func cleanup(ctx *Context) {
+func cleanup(ui *UserInterface) {
 	// You have to catch panics in a defer, clean up, and
 	// re-raise them - otherwise your application can
 	// die without leaving any diagnostic trace.
 	maybePanic := recover()
 
-	ctx.Screen.Fini()
+	ui.Screen.Fini()
 	if maybePanic != nil {
 		panic(maybePanic)
 	}
@@ -103,9 +103,9 @@ func main() {
 		return min(ymax, len(mails))
 	})
 
-	ctx := &Context{mails, idx, s}
-	defer cleanup(ctx)
+	ui := &UserInterface{mails, idx, s}
+	defer cleanup(ui)
 
-	ctx.Draw()
-	eventLoop(ctx)
+	ui.Draw()
+	eventLoop(ui)
 }

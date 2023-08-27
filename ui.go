@@ -4,7 +4,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-type Context struct {
+type UserInterface struct {
 	Mails  []Mail
 	Index  *Index
 	Screen tcell.Screen
@@ -25,18 +25,18 @@ func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) {
 	}
 }
 
-func (ctx Context) Draw() {
-	xmax, _ := ctx.Screen.Size()
+func (ui *UserInterface) Draw() {
+	xmax, _ := ui.Screen.Size()
 	if xmax <= 1 {
 		panic("terminal is too small")
 	}
 
 	y := 0
-	for i, row := range ctx.Mails {
+	for i, row := range ui.Mails {
 		text := row.Subject
 
 		var style tcell.Style
-		if ctx.Index.IsSelected(i) {
+		if ui.Index.IsSelected(i) {
 			style = selStyle
 		} else {
 			style = defStyle
@@ -47,13 +47,13 @@ func (ctx Context) Draw() {
 			text = text[0 : len(text)-1]
 			truncated = true
 		}
-		drawText(ctx.Screen, y, 0, style, text)
+		drawText(ui.Screen, y, 0, style, text)
 		if truncated {
 			// TODO: Determine cells needed for Abbreviated.
-			ctx.Screen.SetContent(xmax-1, y, Abbreviated, nil, style)
+			ui.Screen.SetContent(xmax-1, y, Abbreviated, nil, style)
 		} else {
 			for x := len(text); x < xmax; x++ {
-				ctx.Screen.SetContent(x, y, ' ', nil, style)
+				ui.Screen.SetContent(x, y, ' ', nil, style)
 			}
 		}
 
