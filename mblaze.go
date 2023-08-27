@@ -14,6 +14,10 @@ type Mail struct {
 	Subject string
 }
 
+func (m Mail) CmdArg() string {
+	return strconv.FormatUint(uint64(m.ID), 10)
+}
+
 const (
 	// Output format used by mscan(1) (passed via the -f flag).
 	mscanFmt = "%n %S"
@@ -78,7 +82,7 @@ func mblaze_show(mail Mail) error {
 		pager = "less --RAW-CONTROL-CHARS"
 	}
 
-	cmd := exec.Command("mshow", strconv.FormatUint(uint64(mail.ID), 10))
+	cmd := exec.Command("mshow", mail.CmdArg())
 	cmd.Env = append(os.Environ(), "MBLAZE_PAGER="+pager)
 
 	// Make sure that we use {stdout,stdin,stderr} of the parent
