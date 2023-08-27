@@ -117,6 +117,25 @@ func handleEventKey(ctx *Context, ev *tcell.EventKey) {
 	}
 }
 
+func eventLoop(ctx *Context) {
+	for {
+		ctx.Screen.Show()
+		ev := ctx.Screen.PollEvent()
+
+		switch ev := ev.(type) {
+		case *tcell.EventResize:
+			drawRows(ctx.Screen, ctx.Index, ctx.Mails)
+			ctx.Screen.Sync()
+		case *tcell.EventKey:
+			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
+				return
+			}
+
+			handleEventKey(ctx, ev)
+		}
+	}
+}
+
 func main() {
 	mails, err := mblaze_mscan()
 	if err != nil {
@@ -143,20 +162,5 @@ func main() {
 	defer quit()
 
 	ctx := &Context{mails, idx, s}
-	for {
-		ctx.Screen.Show()
-		ev := ctx.Screen.PollEvent()
-
-		switch ev := ev.(type) {
-		case *tcell.EventResize:
-			drawRows(s, idx, mails)
-			ctx.Screen.Sync()
-		case *tcell.EventKey:
-			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
-				return
-			}
-
-			handleEventKey(ctx, ev)
-		}
-	}
+	eventLoop(ctx)
 }
