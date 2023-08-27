@@ -9,14 +9,10 @@ import (
 	"strings"
 )
 
-type Mail struct {
-	ID      uint
-	Subject string
-}
-
-func (m Mail) CmdArg() string {
-	return strconv.FormatUint(uint64(m.ID), 10)
-}
+const (
+	Seen MailFlag = iota
+	Flagged
+)
 
 const (
 	// Output format used by mscan(1) (passed via the -f flag).
@@ -27,6 +23,28 @@ var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
 	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) (.+)$")
 )
+
+type Mail struct {
+	ID      uint
+	Subject string
+}
+
+func (m Mail) CmdArg() string {
+	return strconv.FormatUint(uint64(m.ID), 10)
+}
+
+type MailFlag int
+
+func (f MailFlag) CmdOpt() string {
+	switch f {
+	case Seen:
+		return "-S"
+	case Flagged:
+		return "-F"
+	}
+
+	panic("unreachable")
+}
 
 func mblaze_mscan() ([]Mail, error) {
 	var mails []Mail
@@ -91,5 +109,10 @@ func mblaze_show(mail Mail) error {
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 
+	return cmd.Run()
+}
+
+func mblaze_flag(mail Mail, flag MailFlag) error {
+	cmd := exec.Command("mflag", flag.CmdOpt(), mail.CmdArg())
 	return cmd.Run()
 }

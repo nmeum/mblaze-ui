@@ -120,6 +120,20 @@ func main() {
 				}
 				s = initScreen()
 				drawRows(s, idx, mails)
+			} else if ev.Key() == tcell.KeyRune {
+				mail := mails[idx.Cur()]
+				switch ev.Rune() {
+				case 's':
+					mblaze_flag(mail, Seen)
+				case 'f':
+					mblaze_flag(mail, Flagged)
+				}
+
+				mails, err := mblaze_mscan()
+				if err != nil {
+					log.Fatal(err)
+				}
+				drawRows(s, idx, mails)
 			} else if ev.Key() == tcell.KeyDown {
 				idx.Inc()
 				drawRows(s, idx, mails)
