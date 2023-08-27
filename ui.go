@@ -25,6 +25,10 @@ func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) {
 	}
 }
 
+func (ui *UserInterface) SelectedMail() Mail {
+	return ui.Mails[ui.Index.Cur()]
+}
+
 func (ui *UserInterface) Draw() {
 	xmax, _ := ui.Screen.Size()
 	if xmax <= 1 {

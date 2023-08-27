@@ -27,7 +27,7 @@ func initScreen() tcell.Screen {
 func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 	if ev.Key() == tcell.KeyEnter {
 		ui.Screen.Fini()
-		mail := ui.Mails[ui.Index.Cur()]
+		mail := ui.SelectedMail()
 		err := mblaze_show(mail)
 		if err != nil {
 			log.Fatal(err)
@@ -35,7 +35,7 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 		ui.Screen = initScreen()
 		ui.Draw()
 	} else if ev.Key() == tcell.KeyRune {
-		mail := ui.Mails[ui.Index.Cur()]
+		mail := ui.SelectedMail()
 		switch ev.Rune() {
 		case 's':
 			mblaze_flag(mail, Seen)
