@@ -5,11 +5,6 @@ import (
 	"log"
 )
 
-const (
-	// Rune used to indicate that the row has been abbreviated.
-	Abbreviated = '…'
-)
-
 func initScreen() tcell.Screen {
 	s, err := tcell.NewScreen()
 	if err != nil {

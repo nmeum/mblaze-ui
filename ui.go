@@ -10,6 +10,11 @@ type UserInterface struct {
 	Screen tcell.Screen
 }
 
+const (
+	// Rune used to indicate that the row has been abbreviated.
+	Abbreviated = '…'
+)
+
 var (
 	// Style used for non-selected rows.
 	defStyle = tcell.StyleDefault.Background(tcell.ColorReset).Foreground(tcell.ColorReset)
