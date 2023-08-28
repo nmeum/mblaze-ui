@@ -20,17 +20,20 @@ const (
 
 const (
 	// Output format used by mscan(1) (passed via the -f flag).
-	mscanFmt = "%n %D %S"
+	mscanFmt = "%n %D %17f %S"
 )
 
 var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
-	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) ([0-9]+-[0-9]+-[0-9]+) (.+)$")
+	//
+	// TODO: Better way to extract the sender's address.
+	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) ([0-9]+-[0-9]+-[0-9]+) (.................) (.+)$")
 )
 
 type Mail struct {
 	ID      uint
 	Date    time.Time
+	From    string
 	Subject string
 }
 
@@ -62,7 +65,7 @@ func (m Mail) Flag(flag MailFlag) error {
 }
 
 func (m Mail) String() string {
-	out := fmt.Sprintf("%10s %s", m.Date.Format(time.DateOnly), m.Subject)
+	out := fmt.Sprintf("%10s %17s %s", m.Date.Format(time.DateOnly), m.From, m.Subject)
 	return out
 }
 
@@ -122,11 +125,13 @@ func mscan() ([]Mail, error) {
 		if err != nil {
 			return mails, err
 		}
-		subject := subs[3]
+		from := strings.TrimSpace(subs[3])
+		subject := subs[4]
 
 		mails = append(mails, Mail{
 			ID:      uint(id),
 			Date:    date,
+			From:    from,
 			Subject: subject,
 		})
 	}
