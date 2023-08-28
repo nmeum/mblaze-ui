@@ -44,6 +44,8 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 			mail.Flag(Flagged)
 		case 'F':
 			mail.Flag(Unflagged)
+		default:
+			return
 		}
 
 		var err error
