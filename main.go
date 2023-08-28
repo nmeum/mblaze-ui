@@ -5,18 +5,18 @@ import (
 	"log"
 )
 
-func initScreen() tcell.Screen {
+func initScreen() (tcell.Screen, error) {
 	s, err := tcell.NewScreen()
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	if err := s.Init(); err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	s.SetStyle(defStyle)
 	s.EnablePaste()
 	s.Clear()
-	return s
+	return s, nil
 }
 
 func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
@@ -28,7 +28,10 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		ui.Screen = initScreen()
+		ui.Screen, err = initScreen()
+		if err != nil {
+			log.Fatal(err)
+		}
 		ui.Draw()
 	case tcell.KeyRune:
 		mail := ui.SelectedMail()
@@ -95,7 +98,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	ui := NewUI(mails, initScreen())
+	screen, err := initScreen()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ui := NewUI(mails, screen)
 	defer cleanup(ui)
 
 	ui.Draw()
