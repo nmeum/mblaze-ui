@@ -106,7 +106,7 @@ func (ui *UserInterface) Draw() {
 		}
 
 		y++
-		if (y >= visible) {
+		if y >= visible {
 			break
 		}
 	}

@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const (
@@ -18,16 +19,17 @@ const (
 
 const (
 	// Output format used by mscan(1) (passed via the -f flag).
-	mscanFmt = "%n %S"
+	mscanFmt = "%n %D %S"
 )
 
 var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
-	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) (.+)$")
+	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) ([0-9]+-[0-9]+-[0-9]+) (.+)$")
 )
 
 type Mail struct {
 	ID      uint
+	Date    time.Time
 	Subject string
 }
 
@@ -110,9 +112,17 @@ func mscan() ([]Mail, error) {
 		if err != nil {
 			return mails, err
 		}
-		subject := subs[2]
+		date, err := time.Parse(time.DateOnly, subs[2])
+		if err != nil {
+			return mails, err
+		}
+		subject := subs[3]
 
-		mails = append(mails, Mail{uint(id), subject})
+		mails = append(mails, Mail{
+			ID:      uint(id),
+			Date:    date,
+			Subject: subject,
+		})
 	}
 
 	err = cmd.Wait()
