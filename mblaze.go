@@ -11,7 +11,9 @@ import (
 
 const (
 	Seen MailFlag = iota
+	Unseen
 	Flagged
+	Unflagged
 )
 
 const (
@@ -64,8 +66,12 @@ type MailFlag int
 
 func (f MailFlag) CmdOpt() string {
 	switch f {
+	case Unseen:
+		return "-s"
 	case Seen:
 		return "-S"
+	case Unflagged:
+		return "-f"
 	case Flagged:
 		return "-F"
 	}

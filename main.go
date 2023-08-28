@@ -39,9 +39,13 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 		mail := ui.SelectedMail()
 		switch ev.Rune() {
 		case 's':
+			mail.Flag(Unseen)
+		case 'S':
 			mail.Flag(Seen)
 		case 'f':
 			mail.Flag(Flagged)
+		case 'F':
+			mail.Flag(Unflagged)
 		}
 
 		var err error

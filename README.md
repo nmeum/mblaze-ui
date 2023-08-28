@@ -15,8 +15,8 @@ The following key bindings are currently implemented:
 * `Esc` / `Ctrl-C`: Exit mblaze-ui
 * `Ctrl-L`: Redraw the screen
 * `Enter`: View the currently selected email using `mshow(1)`
-* `s`: Mark the email as seen using `mflag(1)`
-* `f`: Mark the email as flagged using `mflag(1)`
+* `s` / `S`: Mark the email as seen/unseen using `mflag(1)`
+* `f` / `F`: Mark the email as flagged/unflagged using `mflag(1)`
 
 More functionality is about to be implemented.
 
