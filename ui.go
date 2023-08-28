@@ -6,8 +6,8 @@ import (
 
 type UserInterface struct {
 	Mails  []Mail
-	Index  *Index
 	Screen tcell.Screen
+	index  int
 }
 
 const (
@@ -30,17 +30,34 @@ func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) {
 	}
 }
 
+func NewUI(mails []Mail, screen tcell.Screen) *UserInterface {
+	return &UserInterface{
+		Mails:  mails,
+		Screen: screen,
+		index:  0,
+	}
+}
+
+func (ui *UserInterface) visible() int {
+	_, ymax := ui.Screen.Size()
+	return min(ymax, len(ui.Mails))
+}
+
 func (ui *UserInterface) SelectedMail() Mail {
-	return ui.Mails[ui.Index.Cur()]
+	return ui.Mails[ui.index]
 }
 
 func (ui *UserInterface) NextMail() {
-	ui.Index.Inc()
+	ui.index = (ui.index + 1) % ui.visible()
 	ui.Draw()
 }
 
 func (ui *UserInterface) PrevMail() {
-	ui.Index.Dec()
+	if ui.index == 0 {
+		ui.index = ui.visible() - 1
+	} else {
+		ui.index = (ui.index - 1) % ui.visible()
+	}
 	ui.Draw()
 }
 
@@ -55,7 +72,7 @@ func (ui *UserInterface) Draw() {
 		text := row.Subject
 
 		var style tcell.Style
-		if ui.Index.IsSelected(i) {
+		if i == ui.index {
 			style = selStyle
 		} else {
 			style = defStyle

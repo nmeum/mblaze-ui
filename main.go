@@ -95,13 +95,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s := initScreen()
-	idx := NewIndex(func() int {
-		_, ymax := s.Size()
-		return min(ymax, len(mails))
-	})
-
-	ui := &UserInterface{mails, idx, s}
+	ui := NewUI(mails, initScreen())
 	defer cleanup(ui)
 
 	ui.Draw()
