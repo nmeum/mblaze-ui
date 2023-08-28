@@ -17,6 +17,7 @@ The following key bindings are currently implemented:
 * `Enter`: View the currently selected email using `mshow(1)`
 * `s` / `S`: Mark the email as seen/unseen using `mflag(1)`
 * `f` / `F`: Mark the email as flagged/unflagged using `mflag(1)`
+* `d`: Delete the currently selected mail
 
 More functionality is about to be implemented.
 

@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gdamore/tcell/v2"
 	"log"
+	"os"
 )
 
 func initScreen() (tcell.Screen, error) {
@@ -36,6 +37,16 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 	case tcell.KeyRune:
 		mail := ui.SelectedMail()
 		switch ev.Rune() {
+		case 'd':
+			path, err := mail.Path()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			err = os.Remove(path)
+			if err != nil {
+				log.Fatal(err)
+			}
 		case 's':
 			mail.Flag(Unseen)
 		case 'S':
