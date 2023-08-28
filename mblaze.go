@@ -73,7 +73,7 @@ func (f MailFlag) CmdOpt() string {
 	panic("unreachable")
 }
 
-func mblaze_mscan() ([]Mail, error) {
+func mscan() ([]Mail, error) {
 	var mails []Mail
 
 	cmd := exec.Command("mscan", "-f", mscanFmt, "1:-1")

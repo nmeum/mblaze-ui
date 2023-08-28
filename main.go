@@ -45,7 +45,7 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 		}
 
 		var err error
-		ui.Mails, err = mblaze_mscan()
+		ui.Mails, err = mscan()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -91,7 +91,7 @@ func cleanup(ui *UserInterface) {
 }
 
 func main() {
-	mails, err := mblaze_mscan()
+	mails, err := mscan()
 	if err != nil {
 		log.Fatal(err)
 	}
