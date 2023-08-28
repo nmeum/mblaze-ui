@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"os/exec"
 	"regexp"
@@ -58,6 +59,11 @@ func (m Mail) Show() error {
 func (m Mail) Flag(flag MailFlag) error {
 	cmd := exec.Command("mflag", flag.CmdOpt(), m.CmdArg())
 	return cmd.Run()
+}
+
+func (m Mail) String() string {
+	out := fmt.Sprintf("%10s %s", m.Date.Format(time.DateOnly), m.Subject)
+	return out
 }
 
 func (m Mail) CmdArg() string {

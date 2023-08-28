@@ -81,7 +81,7 @@ func (ui *UserInterface) Draw() {
 
 	y := 0
 	for _, mail := range mails {
-		text := mail.Subject
+		text := mail.String()
 
 		var style tcell.Style
 		if ui.IsSelected(mail) {
