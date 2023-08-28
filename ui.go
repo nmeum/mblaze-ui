@@ -47,18 +47,23 @@ func (ui *UserInterface) SelectedMail() Mail {
 	return ui.Mails[ui.index]
 }
 
+func (ui *UserInterface) IsSelected(m Mail) bool {
+	selected := ui.SelectedMail()
+	return selected.ID == m.ID
+}
+
 func (ui *UserInterface) NextMail() {
-	ui.index = (ui.index + 1) % ui.visible()
-	ui.Draw()
+	if ui.index < len(ui.Mails)-1 {
+		ui.index++
+		ui.Draw()
+	}
 }
 
 func (ui *UserInterface) PrevMail() {
-	if ui.index == 0 {
-		ui.index = ui.visible() - 1
-	} else {
-		ui.index = (ui.index - 1) % ui.visible()
+	if ui.index > 0 {
+		ui.index--
+		ui.Draw()
 	}
-	ui.Draw()
 }
 
 func (ui *UserInterface) Draw() {
@@ -67,12 +72,19 @@ func (ui *UserInterface) Draw() {
 		panic("terminal is too small")
 	}
 
+	mails := ui.Mails
+	visible := ui.visible()
+	if ui.index >= visible {
+		start := ui.index - visible
+		mails = ui.Mails[start+1:]
+	}
+
 	y := 0
-	for i, row := range ui.Mails {
-		text := row.Subject
+	for _, mail := range mails {
+		text := mail.Subject
 
 		var style tcell.Style
-		if i == ui.index {
+		if ui.IsSelected(mail) {
 			style = selStyle
 		} else {
 			style = defStyle
@@ -94,5 +106,8 @@ func (ui *UserInterface) Draw() {
 		}
 
 		y++
+		if (y >= visible) {
+			break
+		}
 	}
 }
