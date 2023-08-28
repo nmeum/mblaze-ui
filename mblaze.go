@@ -37,6 +37,17 @@ type Mail struct {
 	Subject string
 }
 
+func (m Mail) Path() (string, error) {
+	cmd := exec.Command("mseq", m.CmdArg())
+	out, err := cmd.Output()
+	if err != nil {
+		return "", err
+	}
+
+	str := string(out)
+	return strings.TrimRight(str, "\n"), nil
+}
+
 func (m Mail) Show() error {
 	// Use custom command-line options for less to ensure
 	// the pager doesn't exit if the output fits on the screen.
