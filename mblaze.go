@@ -29,6 +29,33 @@ type Mail struct {
 	Subject string
 }
 
+func (m Mail) Show() error {
+	// Use custom command-line options for less to ensure
+	// the pager doesn't exit if the output fits on the screen.
+	//
+	// See also: https://github.com/leahneukirchen/mblaze/blob/v1.2/mshow.c#L818-L822
+	pager := os.Getenv("PAGER")
+	if pager == "" || strings.HasPrefix(pager, "less") {
+		pager = "less --RAW-CONTROL-CHARS"
+	}
+
+	cmd := exec.Command("mshow", m.CmdArg())
+	cmd.Env = append(os.Environ(), "MBLAZE_PAGER="+pager)
+
+	// Make sure that we use {stdout,stdin,stderr} of the parent
+	// process. Need to this explicitly when using os/exec.
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	return cmd.Run()
+}
+
+func (m Mail) Flag(flag MailFlag) error {
+	cmd := exec.Command("mflag", flag.CmdOpt(), m.CmdArg())
+	return cmd.Run()
+}
+
 func (m Mail) CmdArg() string {
 	return strconv.FormatUint(uint64(m.ID), 10)
 }
@@ -88,31 +115,4 @@ func mblaze_mscan() ([]Mail, error) {
 	}
 
 	return mails, nil
-}
-
-func mblaze_show(mail Mail) error {
-	// Use custom command-line options for less to ensure
-	// the pager doesn't exit if the output fits on the screen.
-	//
-	// See also: https://github.com/leahneukirchen/mblaze/blob/v1.2/mshow.c#L818-L822
-	pager := os.Getenv("PAGER")
-	if pager == "" || strings.HasPrefix(pager, "less") {
-		pager = "less --RAW-CONTROL-CHARS"
-	}
-
-	cmd := exec.Command("mshow", mail.CmdArg())
-	cmd.Env = append(os.Environ(), "MBLAZE_PAGER="+pager)
-
-	// Make sure that we use {stdout,stdin,stderr} of the parent
-	// process. Need to this explicitly when using os/exec.
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Stdin = os.Stdin
-
-	return cmd.Run()
-}
-
-func mblaze_flag(mail Mail, flag MailFlag) error {
-	cmd := exec.Command("mflag", flag.CmdOpt(), mail.CmdArg())
-	return cmd.Run()
 }

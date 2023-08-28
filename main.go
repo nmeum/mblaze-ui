@@ -29,7 +29,7 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 	case tcell.KeyEnter:
 		ui.Screen.Fini()
 		mail := ui.SelectedMail()
-		err := mblaze_show(mail)
+		err := mail.Show()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -39,9 +39,9 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 		mail := ui.SelectedMail()
 		switch ev.Rune() {
 		case 's':
-			mblaze_flag(mail, Seen)
+			mail.Flag(Seen)
 		case 'f':
-			mblaze_flag(mail, Flagged)
+			mail.Flag(Flagged)
 		}
 
 		var err error
