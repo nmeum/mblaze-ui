@@ -20,14 +20,17 @@ const (
 
 const (
 	// Output format used by mscan(1) (passed via the -f flag).
-	mscanFmt = "%n %D %17f %S"
+	mscanFmt = "%n %D <%f> %S"
+
+	// Maximum amount of characters to output for the from header.
+	maxFrom = 17
 )
 
 var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
 	//
 	// TODO: Better way to extract the sender's address.
-	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) ([0-9]+-[0-9]+-[0-9]+) (.................) (.+)$")
+	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) ([0-9]+-[0-9]+-[0-9]+) <([^>]*)> (.+)$")
 )
 
 type Mail struct {
@@ -76,7 +79,10 @@ func (m Mail) Flag(flag MailFlag) error {
 }
 
 func (m Mail) String() string {
-	out := fmt.Sprintf("%10s %17s %s", m.Date.Format(time.DateOnly), m.From, m.Subject)
+	from := m.From[0:min(len(m.From), maxFrom)]
+	date := m.Date.Format(time.DateOnly)
+
+	out := fmt.Sprintf("%10s %17s %s", date, from, m.Subject)
 	return out
 }
 
