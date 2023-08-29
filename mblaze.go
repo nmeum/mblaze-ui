@@ -80,7 +80,7 @@ func (m Mail) Flag(flag MailFlag) error {
 
 func (m Mail) String() string {
 	from := m.From[0:min(len(m.From), maxFrom)]
-	date := m.Date.Format(time.DateOnly)
+	date := adaptiveTime(m.Date)
 
 	out := fmt.Sprintf("%10s %17s %s", date, from, m.Subject)
 	return out
