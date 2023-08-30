@@ -71,6 +71,18 @@ func (m Mail) Show() error {
 	return cmd.Run()
 }
 
+func (m Mail) Reply() error {
+	cmd := exec.Command("mrep", m.CmdArg())
+
+	// Make sure that we use {stdout,stdin,stderr} of the parent
+	// process. Need to this explicitly when using os/exec.
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+
+	return cmd.Run()
+}
+
 func (m Mail) Flag(flag MailFlag) error {
 	cmd := exec.Command("mflag", flag.CmdOpt(), m.CmdArg())
 	return cmd.Run()

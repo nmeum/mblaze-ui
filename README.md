@@ -18,6 +18,7 @@ The following key bindings are currently implemented:
 * `s` / `S`: Mark the email as seen/unseen using `mflag(1)`
 * `f` / `F`: Mark the email as flagged/unflagged using `mflag(1)`
 * `d`: Delete the currently selected mail
+* `r`: Compose a reply for the selected mail
 
 More functionality is about to be implemented.
 

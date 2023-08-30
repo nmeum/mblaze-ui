@@ -37,6 +37,18 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 	case tcell.KeyRune:
 		mail := ui.SelectedMail()
 		switch ev.Rune() {
+		case 'r':
+			ui.Screen.Fini()
+			mail := ui.SelectedMail()
+			err := mail.Reply()
+			if err != nil {
+				log.Fatal(err)
+			}
+			ui.Screen, err = initScreen()
+			if err != nil {
+				log.Fatal(err)
+			}
+			ui.Draw()
 		case 'd':
 			path, err := mail.Path()
 			if err != nil {
