@@ -28,8 +28,6 @@ const (
 
 var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
-	//
-	// TODO: Better way to extract the sender's address.
 	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) ([0-9]+-[0-9]+-[0-9]+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]) <([^>]+)> (.+)$")
 )
 
