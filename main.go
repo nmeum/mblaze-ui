@@ -23,32 +23,24 @@ func initScreen() (tcell.Screen, error) {
 func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 	switch ev.Key() {
 	case tcell.KeyEnter:
-		ui.Screen.Fini()
-		mail := ui.SelectedMail()
-		err := mail.Show()
+		err := ui.withoutScreen(func() error {
+			mail := ui.SelectedMail()
+			return mail.Show()
+		})
 		if err != nil {
 			log.Fatal(err)
 		}
-		ui.Screen, err = initScreen()
-		if err != nil {
-			log.Fatal(err)
-		}
-		ui.Draw()
 	case tcell.KeyRune:
 		mail := ui.SelectedMail()
 		switch ev.Rune() {
 		case 'r':
-			ui.Screen.Fini()
-			mail := ui.SelectedMail()
-			err := mail.Reply()
+			err := ui.withoutScreen(func() error {
+				mail := ui.SelectedMail()
+				return mail.Reply()
+			})
 			if err != nil {
 				log.Fatal(err)
 			}
-			ui.Screen, err = initScreen()
-			if err != nil {
-				log.Fatal(err)
-			}
-			ui.Draw()
 		case 'd':
 			path, err := mail.Path()
 			if err != nil {

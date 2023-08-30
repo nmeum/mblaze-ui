@@ -111,3 +111,19 @@ func (ui *UserInterface) Draw() {
 		}
 	}
 }
+
+func (ui *UserInterface) withoutScreen(fn func() error) error {
+	ui.Screen.Fini()
+	err := fn()
+	if err != nil {
+		return err
+	}
+
+	ui.Screen, err = initScreen()
+	if err != nil {
+		return err
+	}
+	ui.Draw()
+
+	return nil
+}
