@@ -156,5 +156,9 @@ func mscan() ([]Mail, error) {
 		return mails, err
 	}
 
+	if len(mails) == 0 {
+		return mails, fmt.Errorf("current sequence is empty")
+	}
+
 	return mails, nil
 }
