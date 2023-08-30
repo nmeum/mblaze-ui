@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gdamore/tcell/v2"
 	"time"
 )
 
@@ -18,5 +19,12 @@ func adaptiveTime(t time.Time) string {
 		return t.Format("Mon Jan 02")
 	} else {
 		return t.Format("Mon 15:04")
+	}
+}
+
+func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) {
+	for _, r := range []rune(text) {
+		s.SetContent(col, row, r, nil, style)
+		col++
 	}
 }

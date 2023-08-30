@@ -23,13 +23,6 @@ var (
 	selStyle = tcell.StyleDefault.Background(tcell.ColorWhite).Foreground(tcell.ColorBlack)
 )
 
-func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) {
-	for _, r := range []rune(text) {
-		s.SetContent(col, row, r, nil, style)
-		col++
-	}
-}
-
 func NewUI(mails []Mail, screen tcell.Screen) *UserInterface {
 	return &UserInterface{
 		Mails:  mails,
