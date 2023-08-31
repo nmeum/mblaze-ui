@@ -20,7 +20,7 @@ const (
 
 const (
 	// Output format used by mscan(1) (passed via the -f flag).
-	mscanFmt = "%n %19D <%f> %S"
+	mscanFmt = "%0n %19D <%0f> %0S"
 
 	// Maximum amount of characters to output for the from header.
 	maxFrom = 17
@@ -122,6 +122,8 @@ func mscan() ([]Mail, error) {
 
 	cmd := exec.Command("mscan", "-f", mscanFmt, "1:-1")
 	cmd.Env = append(os.Environ(), "MBLAZE_PAGER=")
+	// TODO: Somehow configure mblaze to not strip at all.
+	cmd.Env = append(cmd.Env, "COLUMNS=99999")
 
 	reader, err := cmd.StdoutPipe()
 	if err != nil {

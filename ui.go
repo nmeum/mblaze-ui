@@ -12,7 +12,7 @@ type UserInterface struct {
 
 const (
 	// Rune used to indicate that the row has been abbreviated.
-	Abbreviated = '…'
+	abbreviated = '…'
 )
 
 var (
@@ -90,8 +90,8 @@ func (ui *UserInterface) Draw() {
 		}
 		drawText(ui.Screen, y, 0, style, text)
 		if truncated {
-			// TODO: Determine cells needed for Abbreviated.
-			ui.Screen.SetContent(xmax-1, y, Abbreviated, nil, style)
+			// TODO: Determine cells needed for abbreviated.
+			ui.Screen.SetContent(xmax-1, y, abbreviated, nil, style)
 		} else {
 			for x := len(text); x < xmax; x++ {
 				ui.Screen.SetContent(x, y, ' ', nil, style)
