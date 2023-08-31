@@ -25,7 +25,7 @@ func adaptiveTime(t time.Time) string {
 }
 
 func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) int {
-	for _, r := range []rune(text) {
+	for _, r := range text {
 		s.SetContent(col, row, r, nil, style)
 		col += runewidth.RuneWidth(r)
 	}
