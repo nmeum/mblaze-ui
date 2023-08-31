@@ -71,6 +71,8 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		ui.Screen.Clear()
 		ui.Draw()
 	case tcell.KeyDown:
 		ui.NextMail()
