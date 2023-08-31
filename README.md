@@ -12,7 +12,7 @@ Install using `go install` as follows
 
 The following key bindings are currently implemented:
 
-* `Esc` / `Ctrl-C` / 'q': Exit mblaze-ui
+* `Esc` / `Ctrl-C` / `q`: Exit mblaze-ui
 * `Ctrl-L`: Redraw the screen
 * `Enter`: View the currently selected email using `mshow(1)`
 * `Up` / `Down`: Select the next/previous email
