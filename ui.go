@@ -88,12 +88,12 @@ func (ui *UserInterface) Draw() {
 			text = text[0 : len(text)-1]
 			truncated = true
 		}
-		drawText(ui.Screen, y, 0, style, text)
+		lastCol := drawText(ui.Screen, y, 0, style, text)
 		if truncated {
 			// TODO: Determine cells needed for abbreviated.
 			ui.Screen.SetContent(xmax-1, y, abbreviated, nil, style)
 		} else {
-			for x := len(text); x < xmax; x++ {
+			for x := lastCol; x < xmax; x++ {
 				ui.Screen.SetContent(x, y, ' ', nil, style)
 			}
 		}

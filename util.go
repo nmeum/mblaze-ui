@@ -1,8 +1,10 @@
 package main
 
 import (
-	"github.com/gdamore/tcell/v2"
 	"time"
+
+	"github.com/gdamore/tcell/v2"
+	runewidth "github.com/mattn/go-runewidth"
 )
 
 var (
@@ -22,9 +24,11 @@ func adaptiveTime(t time.Time) string {
 	}
 }
 
-func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) {
+func drawText(s tcell.Screen, row, col int, style tcell.Style, text string) int {
 	for _, r := range []rune(text) {
 		s.SetContent(col, row, r, nil, style)
-		col++
+		col += runewidth.RuneWidth(r)
 	}
+
+	return col
 }
