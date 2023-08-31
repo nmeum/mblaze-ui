@@ -59,6 +59,21 @@ func (ui *UserInterface) PrevMail() {
 	}
 }
 
+func (ui *UserInterface) NextPage() {
+	ui.index = min(len(ui.Mails)-1, ui.index+ui.visible())
+	ui.Draw()
+}
+
+func (ui *UserInterface) PrevPage() {
+	visible := ui.visible()
+	if ui.index > visible {
+		ui.index = ui.index - visible
+	} else {
+		ui.index = 0
+	}
+	ui.Draw()
+}
+
 func (ui *UserInterface) Draw() {
 	xmax, _ := ui.Screen.Size()
 	if xmax <= 1 {

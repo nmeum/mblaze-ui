@@ -15,12 +15,12 @@ The following key bindings are currently implemented:
 * `Esc` / `Ctrl-C`: Exit mblaze-ui
 * `Ctrl-L`: Redraw the screen
 * `Enter`: View the currently selected email using `mshow(1)`
+* `Up` / `Down`: Select the next/previous email
+* `PageUp` / `PageDown`: Show the next/previous page of mails
 * `s` / `S`: Mark the email as seen/unseen using `mflag(1)`
 * `f` / `F`: Mark the email as flagged/unflagged using `mflag(1)`
-* `d`: Delete the currently selected mail
-* `r`: Compose a reply for the selected mail
-
-More functionality is about to be implemented.
+* `d`: Delete the currently selected email
+* `r`: Compose a reply for the selected email
 
 ## License
 

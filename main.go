@@ -76,6 +76,10 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 		ui.NextMail()
 	case tcell.KeyUp:
 		ui.PrevMail()
+	case tcell.KeyPgDn:
+		ui.NextPage()
+	case tcell.KeyPgUp:
+		ui.PrevPage()
 	case tcell.KeyCtrlL:
 		ui.Screen.Sync()
 	}
