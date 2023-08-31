@@ -1,6 +1,6 @@
 # mblaze-ui
 
-A [mutt][mutt web]-like TUI for the [mblaze][mblaze github] email client.
+A minimal TUI for the [mblaze][mblaze github] email client.
 
 ## Installation
 
@@ -37,5 +37,4 @@ Public License for more details.
 You should have received a copy of the GNU General Public License along
 with this program. If not, see <https://www.gnu.org/licenses/>.
 
-[mutt web]: http://www.mutt.org
 [mblaze github]: https://github.com/leahneukirchen/mblaze
