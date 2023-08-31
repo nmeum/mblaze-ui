@@ -95,7 +95,9 @@ func eventLoop(ui *UserInterface) {
 			ui.Draw()
 			ui.Screen.Sync()
 		case *tcell.EventKey:
-			if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
+			if ev.Key() == tcell.KeyEscape ||
+				ev.Key() == tcell.KeyCtrlC ||
+				(ev.Key() == tcell.KeyRune && ev.Rune() == 'q') {
 				return
 			}
 
