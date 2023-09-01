@@ -2,6 +2,17 @@
 
 A minimal TUI for the [mblaze][mblaze github] email client.
 
+## About
+
+mblaze-ui is [tcell][tcell github]-based terminal user interface for the
+[mblaze][mblaze github] email client. Similar to existing Unix utilities
+from `mblaze(7)`, it operates on the current message sequence as set by
+`mseq(1)`. For each mail of the sequence, it prints a one line summary
+similar to `mscan(1)`. Using the arrow keys, a mail from the sequence
+can be selected and manipulated using the key bindings described below.
+Conceptually, mblaze-ui is therefore similar to `mless(1)` but offers
+a pager-independent interface.
+
 ## Installation
 
 Install using `go install` as follows
@@ -38,3 +49,4 @@ You should have received a copy of the GNU General Public License along
 with this program. If not, see <https://www.gnu.org/licenses/>.
 
 [mblaze github]: https://github.com/leahneukirchen/mblaze
+[tcell github]: https://github.com/gdamore/tcell
