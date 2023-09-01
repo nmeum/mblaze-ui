@@ -2,6 +2,8 @@
 
 A minimal TUI for the [mblaze][mblaze github] email client.
 
+![Screenshot of mblaze-ui with a list of email summaries.](https://gist.github.com/nmeum/ddb6ddbe84d9ef5bdabd5a81219c93b2/raw/8a56073afb3b1d3d5019e09f2af43f59c245ace4/mblaze-ui.png)
+
 ## About
 
 mblaze-ui is [tcell][tcell github]-based terminal user interface for the
