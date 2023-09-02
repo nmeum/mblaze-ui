@@ -51,14 +51,18 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 			if err != nil {
 				log.Fatal(err)
 			}
-		case 's':
-			mail.Flag(Unseen)
-		case 'S':
-			mail.Flag(Seen)
 		case 'f':
 			mail.Flag(Flagged)
 		case 'F':
 			mail.Flag(Unflagged)
+		case 's':
+			mail.Flag(Unseen)
+		case 'S':
+			mail.Flag(Seen)
+		case 't':
+			mail.Flag(Untrashed)
+		case 'T':
+			mail.Flag(Trashed)
 		default:
 			return
 		}

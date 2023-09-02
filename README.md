@@ -30,8 +30,9 @@ The following key bindings are currently implemented:
 * `Enter`: View the currently selected email using `mshow(1)`
 * `Up` / `Down`: Select the next/previous email
 * `PageUp` / `PageDown`: Show the next/previous page of mails
-* `s` / `S`: Mark the email as seen/unseen using `mflag(1)`
-* `f` / `F`: Mark the email as flagged/unflagged using `mflag(1)`
+* `f` / `F`: Mark the email as unflagged/flagged using `mflag(1)`
+* `s` / `S`: Mark the email as unseen/seen using `mflag(1)`
+* `t` / `T`: Mark the mail as untrashed/trashed using `mflag(1)`
 * `d`: Delete the currently selected email
 * `r`: Compose a reply for the selected email
 
