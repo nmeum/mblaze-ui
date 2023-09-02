@@ -67,6 +67,9 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 			return
 		}
 
+		// TODO: Consider using `mflag -v` above to determine the
+		// new file names and thereby keep the sequence in tact.
+
 		var err error
 		ui.Mails, err = mscan()
 		if err != nil {
