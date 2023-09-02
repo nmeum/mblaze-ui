@@ -41,9 +41,6 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			// no need to refresh mscan(1) sequence.
-			return
 		case 'd':
 			path, err := mail.Path()
 			if err != nil {
