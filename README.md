@@ -21,6 +21,22 @@ Install using `go install` as follows
 
     $ go install github.com/nmeum/mblaze-ui@latest
 
+## Usage Example
+
+Set a message sequence using `mseq(1)`, for example
+
+    $ mlist -s ~/mail/INBOX | msort -r -d | mseq -S
+
+will set the message sequence to all unseen emails in your INBOX and
+will sort these messages ascending by date. This sequence can then
+be viewed and modified in a TUI environment using:
+
+    $ mblaze-ui
+
+In the TUI, a specific message can be selected using the arrow keys.
+The state of this message can be modified through the key bindings
+described in the following section.
+
 ## Key Bindings
 
 The following key bindings are currently implemented:
