@@ -17,7 +17,8 @@ a pager-independent interface.
 
 ## Installation
 
-Install using `go install` as follows
+This software requires at least Go 1.21.0. If such a Go version
+is available on your system, install using `go install` as follows:
 
     $ go install github.com/nmeum/mblaze-ui@latest
 
