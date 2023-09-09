@@ -1,0 +1,10 @@
+* Fix sequence update after reply
+* Support threading via mthread(1)
+* Improve scrolling
+	* Only scroll up if we are at the first row
+	* Only scroll down if we are at the last row
+* Add a script which moves mails to a different directory using fzf(1)
+* Allow for custom keybindings / commands to be defined
+* Allow selection of multiple emails
+	* Similar to vim's virtual block selection
+	* Useful in combination with mthread (e.g. select whole thread)
