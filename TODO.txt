@@ -1,3 +1,5 @@
+* Check mtime of ~/.config/mblaze/seq before performing an operation
+* Allow passing messages sequences via stdin?
 * Fix sequence update after reply
 * Support threading via mthread(1)
 * Improve scrolling
