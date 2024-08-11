@@ -20,6 +20,11 @@ func initScreen() (tcell.Screen, error) {
 	return s, nil
 }
 
+func fatal(ui *UserInterface, v ...any) {
+	cleanup(ui)
+	log.Fatal(v)
+}
+
 func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 	switch ev.Key() {
 	case tcell.KeyEnter:
@@ -28,7 +33,7 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 			return mail.Show()
 		})
 		if err != nil {
-			log.Fatal(err)
+			fatal(ui, err)
 		}
 	case tcell.KeyRune:
 		mail := ui.SelectedMail()
@@ -39,17 +44,17 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 				return mail.Reply()
 			})
 			if err != nil {
-				log.Fatal(err)
+				fatal(ui, err)
 			}
 		case 'd':
 			path, err := mail.Path()
 			if err != nil {
-				log.Fatal(err)
+				fatal(ui, err)
 			}
 
 			err = os.Remove(path)
 			if err != nil {
-				log.Fatal(err)
+				fatal(ui, err)
 			}
 		case 'f':
 			mail.Flag(Flagged)
@@ -72,7 +77,7 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 
 		err := ui.Refresh()
 		if err != nil {
-			log.Fatal(err)
+			fatal(ui, err)
 		}
 
 		ui.Screen.Clear()
