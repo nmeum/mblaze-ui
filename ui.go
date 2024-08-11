@@ -31,6 +31,19 @@ func NewUI(mails []Mail, screen tcell.Screen) *UserInterface {
 	}
 }
 
+func (ui *UserInterface) Refresh() error {
+	var err error
+	ui.Mails, err = mscan()
+	if err != nil {
+		return err
+	}
+
+	// If the last mail was modified, the length of the sequence could
+	// have been reduced by 1; therefore, we need to update the index.
+	ui.index = min(ui.index, len(ui.Mails)-1)
+	return nil
+}
+
 func (ui *UserInterface) visible() int {
 	_, ymax := ui.Screen.Size()
 	return min(ymax, len(ui.Mails))
