@@ -22,7 +22,7 @@ func initScreen() (tcell.Screen, error) {
 
 func fatal(ui *UserInterface, v ...any) {
 	cleanup(ui)
-	log.Fatal(v)
+	log.Fatal(v...)
 }
 
 func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
