@@ -4,6 +4,8 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"log"
 	"os"
+	"path/filepath"
+	"time"
 )
 
 func initScreen() (tcell.Screen, error) {
@@ -95,10 +97,49 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 	}
 }
 
+// See:
+//
+//   - https://github.com/leahneukirchen/mblaze/blob/v1.3/seq.c#L19
+//   - https://github.com/leahneukirchen/mblaze/blob/v1.3/mseq.c#L194-L196
+func seqPath() string {
+	seqFile := os.Getenv("MAILSEQ")
+	if seqFile != "" {
+		return seqFile
+	}
+
+	profile := os.Getenv("MBLAZE")
+	if profile == "" {
+		home := os.Getenv("HOME")
+		if home == "" {
+			return ""
+		}
+
+		profile = filepath.Join(home, ".mblaze")
+	}
+
+	return filepath.Join(profile, "seq")
+}
+
 func eventLoop(ui *UserInterface) {
+	seqFp := seqPath()
+	if seqFp == "" {
+		fatal(ui, "Couldn't determine path for mblaze sequence")
+	}
+
+	var prevMtime *time.Time
 	for {
 		ui.Screen.Show()
 		ev := ui.Screen.PollEvent()
+
+		seqFi, err := os.Stat(seqFp)
+		if err != nil {
+			fatal(ui, err)
+		}
+		newTime := seqFi.ModTime()
+		if prevMtime != nil && *prevMtime != seqFi.ModTime() {
+			fatal(ui, "An external program has modified the mblaze sequence")
+		}
+		prevMtime = &newTime
 
 		switch ev := ev.(type) {
 		case *tcell.EventResize:
