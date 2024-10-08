@@ -47,12 +47,7 @@ func handleEventKey(ui *UserInterface, ev *tcell.EventKey) {
 				fatal(ui, err)
 			}
 		case 'd':
-			path, err := mail.Path()
-			if err != nil {
-				fatal(ui, err)
-			}
-
-			err = os.Remove(path)
+			err := os.Remove(mail.Path)
 			if err != nil {
 				fatal(ui, err)
 			}

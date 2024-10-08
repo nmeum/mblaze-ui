@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -22,7 +21,7 @@ const (
 
 const (
 	// Output format used by mscan(1) (passed via the -f flag).
-	mscanFmt = "%0n %19D <%0f> %0S"
+	mscanFmt = "%0R	%19D <%0f> %0S"
 
 	// Maximum amount of characters to output for the from header.
 	maxFrom = 17
@@ -30,25 +29,14 @@ const (
 
 var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
-	mscanRegex = regexp.MustCompilePOSIX("^([0-9]+) ([0-9]+-[0-9]+-[0-9]+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]) <([^>]+)> (.+)$")
+	mscanRegex = regexp.MustCompilePOSIX(`^([^\t]+)	([0-9]+-[0-9]+-[0-9]+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]) <([^>]+)> (.+)$`)
 )
 
 type Mail struct {
-	ID      uint
+	Path    string
 	Date    time.Time
 	From    string
 	Subject string
-}
-
-func (m Mail) Path() (string, error) {
-	cmd := exec.Command("mseq", m.CmdArg())
-	out, err := cmd.Output()
-	if err != nil {
-		return "", err
-	}
-
-	str := string(out)
-	return strings.TrimRight(str, "\n"), nil
 }
 
 func (m Mail) Show() error {
@@ -61,7 +49,7 @@ func (m Mail) Show() error {
 		pager = "less --RAW-CONTROL-CHARS"
 	}
 
-	cmd := exec.Command("mshow", m.CmdArg())
+	cmd := exec.Command("mshow", m.Path)
 	cmd.Env = append(os.Environ(), "MBLAZE_PAGER="+pager)
 
 	// Make sure that we use {stdout,stdin,stderr} of the parent
@@ -74,7 +62,7 @@ func (m Mail) Show() error {
 }
 
 func (m Mail) Reply() error {
-	cmd := exec.Command("mrep", m.CmdArg())
+	cmd := exec.Command("mrep", m.Path)
 
 	// Make sure that we use {stdout,stdin,stderr} of the parent
 	// process. Need to this explicitly when using os/exec.
@@ -86,7 +74,7 @@ func (m Mail) Reply() error {
 }
 
 func (m Mail) Flag(flag MailFlag) error {
-	cmd := exec.Command("mflag", flag.CmdOpt(), m.CmdArg())
+	cmd := exec.Command("mflag", flag.CmdOpt(), m.Path)
 	return cmd.Run()
 }
 
@@ -96,10 +84,6 @@ func (m Mail) String() string {
 
 	out := fmt.Sprintf("%10s %17s %s", date, from, m.Subject)
 	return out
-}
-
-func (m Mail) CmdArg() string {
-	return strconv.FormatUint(uint64(m.ID), 10)
 }
 
 type MailFlag int
@@ -151,11 +135,7 @@ func mscan() ([]Mail, error) {
 			continue
 		}
 
-		var id uint64
-		id, err = strconv.ParseUint(subs[1], 10, 32)
-		if err != nil {
-			return mails, err
-		}
+		fp := subs[1]
 		date, err := time.Parse(time.DateTime, subs[2])
 		if err != nil {
 			return mails, err
@@ -164,7 +144,7 @@ func mscan() ([]Mail, error) {
 		subject := subs[4]
 
 		mails = append(mails, Mail{
-			ID:      uint(id),
+			Path:    fp,
 			Date:    date,
 			From:    from,
 			Subject: subject,

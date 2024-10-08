@@ -55,7 +55,7 @@ func (ui *UserInterface) SelectedMail() Mail {
 
 func (ui *UserInterface) IsSelected(m Mail) bool {
 	selected := ui.SelectedMail()
-	return selected.ID == m.ID
+	return selected.Path == m.Path
 }
 
 func (ui *UserInterface) NextMail() {
