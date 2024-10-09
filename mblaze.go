@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"os/exec"
 	"regexp"
@@ -30,6 +32,9 @@ const (
 var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
 	mscanRegex = regexp.MustCompilePOSIX("^([^	]+)	([0-9]+-[0-9]+-[0-9]+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]| *\\(unknown\\)) <([^>]+)> (.+)$")
+
+	// Workaround for https://github.com/leahneukirchen/mblaze/issues/264
+	noMail = errors.New("mail no longer exists")
 )
 
 type Mail struct {
@@ -37,6 +42,16 @@ type Mail struct {
 	Date    time.Time
 	From    string
 	Subject string
+}
+
+// This is a workaround for a bug in mblaze. Presently, mblaze utilities do not check
+// if the mail still exists if it is passed as an absolute file path, hence we do it here.
+//
+// See: https://github.com/leahneukirchen/mblaze/issues/264
+func (m Mail) Exists() bool {
+	// XXX: Could use syscall.access with F_OK here instead.
+	_, err := os.Stat(m.Path)
+	return !errors.Is(err, fs.ErrNotExist)
 }
 
 func (m Mail) Show() error {
@@ -49,6 +64,9 @@ func (m Mail) Show() error {
 		pager = "less --RAW-CONTROL-CHARS"
 	}
 
+	if !m.Exists() {
+		return noMail
+	}
 	cmd := exec.Command("mshow", m.Path)
 	cmd.Env = append(os.Environ(), "MBLAZE_PAGER="+pager)
 
@@ -62,6 +80,9 @@ func (m Mail) Show() error {
 }
 
 func (m Mail) Reply() error {
+	if !m.Exists() {
+		return noMail
+	}
 	cmd := exec.Command("mrep", m.Path)
 
 	// Make sure that we use {stdout,stdin,stderr} of the parent
@@ -74,6 +95,9 @@ func (m Mail) Reply() error {
 }
 
 func (m Mail) Flag(flag MailFlag) error {
+	if !m.Exists() {
+		return noMail
+	}
 	cmd := exec.Command("mflag", flag.CmdOpt(), m.Path)
 	return cmd.Run()
 }
