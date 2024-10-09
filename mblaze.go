@@ -29,7 +29,7 @@ const (
 
 var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
-	mscanRegex = regexp.MustCompilePOSIX(`^([^\t]+)	([0-9]+-[0-9]+-[0-9]+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]) <([^>]+)> (.+)$`)
+	mscanRegex = regexp.MustCompilePOSIX("^([^	]+)	([0-9]+-[0-9]+-[0-9]+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]| *\\(unknown\\)) <([^>]+)> (.+)$")
 )
 
 type Mail struct {
@@ -80,7 +80,13 @@ func (m Mail) Flag(flag MailFlag) error {
 
 func (m Mail) String() string {
 	from := m.From[0:min(len(m.From), maxFrom)]
-	date := adaptiveTime(m.Date)
+
+	var date string
+	if m.Date.IsZero() {
+		date = "(unknown)"
+	} else {
+		date = adaptiveTime(m.Date)
+	}
 
 	out := fmt.Sprintf("%10s %17s %s", date, from, m.Subject)
 	return out
@@ -136,9 +142,15 @@ func mscan() ([]Mail, error) {
 		}
 
 		fp := subs[1]
-		date, err := time.Parse(time.DateTime, subs[2])
-		if err != nil {
-			return mails, err
+		var date time.Time
+		if strings.TrimSpace(subs[2]) == "(unknown)" {
+			date = time.Time{} // TODO: Go doesn't have a Maybe monad :(
+		} else {
+			var err error
+			date, err = time.Parse(time.DateTime, subs[2])
+			if err != nil {
+				return mails, err
+			}
 		}
 		from := strings.TrimSpace(subs[3])
 		subject := subs[4]
