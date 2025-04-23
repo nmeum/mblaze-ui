@@ -31,7 +31,7 @@ const (
 
 var (
 	// POSIX extended regular expression for parsing 'mscanFmt'.
-	mscanRegex = regexp.MustCompilePOSIX("^([^	]+)	([0-9]+-[0-9]+-[0-9]+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]| *\\(unknown\\)) <([^>]+)> (.+)$")
+	mscanRegex = regexp.MustCompilePOSIX("^([^	]+)	([0-9]+-[0-9]+-[0-9]+ [0-9][0-9]:[0-9][0-9]:[0-9][0-9]| *\\(unknown\\)) <([^>]+)> (.*)$")
 
 	// Workaround for https://github.com/leahneukirchen/mblaze/issues/264
 	noMail = errors.New("mail no longer exists")
