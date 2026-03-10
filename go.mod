@@ -1,4 +1,4 @@
-module github.com/nmeum/mblaze-ui
+module git.8pit.net/mblaze-ui
 
 go 1.21.0
 
